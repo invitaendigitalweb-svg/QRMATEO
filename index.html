@@ -3,1039 +3,196 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Comparte tus recuerdos</title>
-
 <style>
-
 :root {
     --color-principal: #7D5578;
     --color-claro: #F7F0F6;
     --color-texto: #555;
 }
-
-* {
-    box-sizing: border-box;
-}
-
+* { box-sizing: border-box; }
 body {
-    margin: 0;
-    min-height: 100vh;
-    padding: 16px;
-
-    font-family:
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        sans-serif;
-
-    background:
-        linear-gradient(
-            135deg,
-            #faf5f9,
-            #eee4ed
-        );
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    margin: 0; min-height: 100vh; padding: 16px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: linear-gradient(135deg, #faf5f9, #eee4ed);
+    display: flex; justify-content: center; align-items: center;
 }
-
 .contenedor {
-    width: 100%;
-    max-width: 520px;
-
-    background: white;
-
-    border-radius: 28px;
-
-    padding: 35px 24px 28px;
-
-    text-align: center;
-
-    box-shadow:
-        0 15px 45px
-        rgba(0,0,0,.10);
+    width: 100%; max-width: 520px; background: white;
+    border-radius: 28px; padding: 35px 24px 28px; text-align: center;
+    box-shadow: 0 15px 45px rgba(0,0,0,.10);
 }
-
 .icono {
-    width: 72px;
-    height: 72px;
-
-    margin: 0 auto 18px;
-
-    border-radius: 50%;
-
-    background: var(--color-claro);
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    font-size: 32px;
+    width: 72px; height: 72px; margin: 0 auto 18px; border-radius: 50%;
+    background: var(--color-claro); display: flex; align-items: center; justify-content: center; font-size: 32px;
 }
-
-h1 {
-    margin: 0;
-
-    color: var(--color-principal);
-
-    font-size: 28px;
-
-    font-weight: 600;
-}
-
-.evento {
-    margin-top: 8px;
-
-    color: #888;
-
-    font-size: 15px;
-}
-
-.descripcion {
-    margin:
-        20px auto 26px;
-
-    max-width: 390px;
-
-    color: var(--color-texto);
-
-    font-size: 15px;
-
-    line-height: 1.6;
-}
-
+h1 { margin: 0; color: var(--color-principal); font-size: 28px; font-weight: 600; }
+.evento { margin-top: 8px; color: #888; font-size: 15px; }
+.descripcion { margin: 20px auto 26px; max-width: 390px; color: var(--color-texto); font-size: 15px; line-height: 1.6; }
 .selector {
-    width: 100%;
-
-    display: flex;
-
-    justify-content: center;
-    align-items: center;
-
-    gap: 8px;
-
-    padding: 16px;
-
-    border-radius: 50px;
-
-    background:
-        var(--color-principal);
-
-    color: white;
-
-    font-size: 16px;
-
-    font-weight: 600;
-
-    cursor: pointer;
-
-    box-shadow:
-        0 8px 20px
-        rgba(125,85,120,.20);
+    width: 100%; display: flex; justify-content: center; align-items: center; gap: 8px;
+    padding: 16px; border-radius: 50px; background: var(--color-principal); color: white;
+    font-size: 16px; font-weight: 600; cursor: pointer; box-shadow: 0 8px 20px rgba(125,85,120,.20);
 }
-
-input[type="file"] {
-    display: none;
-}
-
-#contador {
-    margin-top: 15px;
-
-    color: #888;
-
-    font-size: 14px;
-}
-
-#preview {
-    display: grid;
-
-    grid-template-columns:
-        repeat(3, 1fr);
-
-    gap: 9px;
-
-    margin-top: 20px;
-}
-
-.preview-item {
-    position: relative;
-
-    aspect-ratio: 1 / 1;
-
-    overflow: hidden;
-
-    border-radius: 13px;
-
-    background: #eee;
-}
-
-.preview-item img,
-.preview-item video {
-    width: 100%;
-    height: 100%;
-
-    object-fit: cover;
-}
-
+input[type="file"] { display: none; }
+#contador { margin-top: 15px; color: #888; font-size: 14px; }
+#preview { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; margin-top: 20px; }
+.preview-item { position: relative; aspect-ratio: 1 / 1; overflow: hidden; border-radius: 13px; background: #eee; }
+.preview-item img, .preview-item video { width: 100%; height: 100%; object-fit: cover; }
 .video-icon {
-    position: absolute;
-
-    right: 7px;
-    bottom: 7px;
-
-    width: 28px;
-    height: 28px;
-
-    border-radius: 50%;
-
-    background:
-        rgba(0,0,0,.65);
-
-    color: white;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    font-size: 12px;
+    position: absolute; right: 7px; bottom: 7px; width: 28px; height: 28px;
+    border-radius: 50%; background: rgba(0,0,0,.65); color: white;
+    display: flex; align-items: center; justify-content: center; font-size: 12px;
 }
-
 #subir {
-    display: none;
-
-    width: 100%;
-
-    margin-top: 22px;
-
-    padding: 16px;
-
-    border: none;
-
-    border-radius: 50px;
-
-    background:
-        var(--color-principal);
-
-    color: white;
-
-    font-size: 16px;
-
-    font-weight: 600;
-
-    cursor: pointer;
+    display: none; width: 100%; margin-top: 22px; padding: 16px; border: none;
+    border-radius: 50px; background: var(--color-principal); color: white; font-size: 16px; font-weight: 600; cursor: pointer;
 }
-
-#subir:disabled {
-    opacity: .55;
-}
-
-#progreso-container {
-    display: none;
-
-    margin-top: 25px;
-}
-
-.barra {
-    width: 100%;
-
-    height: 9px;
-
-    background: #eee;
-
-    border-radius: 20px;
-
-    overflow: hidden;
-}
-
-#progreso {
-    width: 0%;
-
-    height: 100%;
-
-    background:
-        var(--color-principal);
-
-    transition:
-        width .25s;
-}
-
-#estado {
-    margin-top: 10px;
-
-    color: #888;
-
-    font-size: 13px;
-}
-
+#subir:disabled { opacity: .55; }
+#progreso-container { display: none; margin-top: 25px; }
+.barra { width: 100%; height: 9px; background: #eee; border-radius: 20px; overflow: hidden; }
+#progreso { width: 0%; height: 100%; background: var(--color-principal); transition: width .25s; }
+#estado { margin-top: 10px; color: #888; font-size: 13px; }
 .exito {
-    display: none;
-
-    margin-top: 25px;
-
-    padding: 22px;
-
-    border-radius: 18px;
-
-    background:
-        var(--color-claro);
-
-    color:
-        var(--color-principal);
-
-    font-size: 15px;
-
-    line-height: 1.5;
-
-    font-weight: 600;
+    display: none; margin-top: 25px; padding: 22px; border-radius: 18px;
+    background: var(--color-claro); color: var(--color-principal); font-size: 15px; line-height: 1.5; font-weight: 600;
 }
-
-.error {
-    display: none;
-
-    margin-top: 18px;
-
-    color: #c0392b;
-
-    font-size: 14px;
-}
-
-.nota {
-    margin-top: 20px;
-
-    color: #aaa;
-
-    font-size: 12px;
-
-    line-height: 1.5;
-}
-
+.error { display: none; margin-top: 18px; color: #c0392b; font-size: 14px; }
+.nota { margin-top: 20px; color: #aaa; font-size: 12px; line-height: 1.5; }
 </style>
 </head>
-
 <body>
 
 <div class="contenedor">
-
-    <div class="icono">
-        📸
-    </div>
-
-    <h1>
-        Comparte tus recuerdos
-    </h1>
-
-    <div
-        class="evento"
-        id="nombreEvento">
-    </div>
-
+    <div class="icono">📸</div>
+    <h1>Comparte tus recuerdos</h1>
+    <div class="evento" id="nombreEvento">PRUEBA MATEO</div>
     <div class="descripcion">
-
-        Comparte aquí tus fotos y videos
-        para guardar todos los momentos
-        especiales de este día. 🤍
-
+        Comparte aquí tus fotos y videos para guardar todos los momentos especiales de este día. 🤍
     </div>
 
-    <label
-        class="selector"
-        for="archivos">
-
+    <label class="selector" for="archivos">
         📷 Seleccionar fotos y videos
-
     </label>
-
-    <input
-        type="file"
-        id="archivos"
-        accept="image/*,video/*"
-        multiple
-    >
+    <input type="file" id="archivos" accept="image/*,video/*" multiple>
 
     <div id="contador"></div>
-
     <div id="preview"></div>
 
-    <button id="subir">
-
-        ✨ Subir mis recuerdos
-
-    </button>
+    <button id="subir">✨ Subir mis recuerdos</button>
 
     <div id="progreso-container">
-
-        <div class="barra">
-            <div id="progreso"></div>
-        </div>
-
-        <div id="estado">
-            Preparando...
-        </div>
-
+        <div class="barra"><div id="progreso"></div></div>
+        <div id="estado">Subiendo archivos...</div>
     </div>
 
-    <div
-        class="exito"
-        id="exito">
-
-        🎉 ¡Listo!
-
-        <br><br>
-
-        Tus recuerdos fueron guardados
-        correctamente. 🤍
-
+    <div class="exito" id="exito">
+        🎉 ¡Listo!<br><br>Tus recuerdos fueron guardados correctamente. 🤍
     </div>
 
-    <div
-        class="error"
-        id="error">
-    </div>
-
-    <div class="nota">
-
-        Puedes seleccionar varias fotos
-        y videos al mismo tiempo.
-
-    </div>
-
+    <div class="error" id="error"></div>
+    <div class="nota">Puedes seleccionar varias fotos y videos al mismo tiempo.</div>
 </div>
 
-
 <script>
+// CONFIGURACIÓN
+const NOMBRE_EVENTO = "PRUEBA MATEO";
+const ID_EVENTO = "prueba-mateo";
+const URL_BACKEND = "https://TU-SERVIDOR-BACKEND.onrender.com/subir-recuerdo"; // Aquí pondrás la URL que te dé Render/Railway
 
-/* ==================================================
-   CONFIGURACIÓN DEL CLIENTE
-================================================== */
-
-const NOMBRE_EVENTO =
-    "PRUEBA MATEO";
-
-const COLOR_PRINCIPAL =
-    "#7D5578";
-
-const ID_EVENTO =
-    "prueba-mateo";
-
-
-/* ==================================================
-   URL DE APPS SCRIPT
-================================================== */
-
-const URL_APPS_SCRIPT =
-"https://script.google.com/macros/s/AKfycbwt3tgR-vMCjUNyseVQ_5RQW8fUZUp4u1hm9TXbQK1olbF5VBSLhIZMfQ9G-uhHjhsspw/exec";
-
-
-/* ==================================================
-   ELEMENTOS
-================================================== */
-
-const input =
-    document.getElementById("archivos");
-
-const preview =
-    document.getElementById("preview");
-
-const contador =
-    document.getElementById("contador");
-
-const botonSubir =
-    document.getElementById("subir");
-
-const progresoContainer =
-    document.getElementById(
-        "progreso-container"
-    );
-
-const progreso =
-    document.getElementById("progreso");
-
-const estado =
-    document.getElementById("estado");
-
-const exito =
-    document.getElementById("exito");
-
-const error =
-    document.getElementById("error");
-
-const nombreEvento =
-    document.getElementById(
-        "nombreEvento"
-    );
-
-
-/* ==================================================
-   DISEÑO
-================================================== */
-
-document.documentElement.style
-    .setProperty(
-        "--color-principal",
-        COLOR_PRINCIPAL
-    );
-
-nombreEvento.textContent =
-    NOMBRE_EVENTO;
-
-
-/* ==================================================
-   SELECCIONAR ARCHIVOS
-================================================== */
+const input = document.getElementById("archivos");
+const preview = document.getElementById("preview");
+const contador = document.getElementById("contador");
+const botonSubir = document.getElementById("subir");
+const progresoContainer = document.getElementById("progreso-container");
+const progreso = document.getElementById("progreso");
+const estado = document.getElementById("estado");
+const exito = document.getElementById("exito");
+const error = document.getElementById("error");
 
 let archivosSeleccionados = [];
 
+input.addEventListener("change", function() {
+    archivosSeleccionados = Array.from(input.files);
+    preview.innerHTML = "";
 
-input.addEventListener(
-    "change",
-    function() {
-
-        archivosSeleccionados =
-            Array.from(input.files);
-
-        preview.innerHTML = "";
-
-
-        if (
-            archivosSeleccionados.length
-            === 0
-        ) {
-
-            contador.textContent = "";
-
-            botonSubir.style.display =
-                "none";
-
-            return;
-        }
-
-
-        contador.textContent =
-            archivosSeleccionados.length
-            +
-            (
-                archivosSeleccionados.length
-                === 1
-                ?
-                " archivo seleccionado"
-                :
-                " archivos seleccionados"
-            );
-
-
-        archivosSeleccionados.forEach(
-            archivo => {
-
-                const item =
-                    document.createElement(
-                        "div"
-                    );
-
-                item.className =
-                    "preview-item";
-
-
-                if (
-                    archivo.type
-                    .startsWith("image/")
-                ) {
-
-                    const img =
-                        document.createElement(
-                            "img"
-                        );
-
-                    img.src =
-                        URL.createObjectURL(
-                            archivo
-                        );
-
-                    item.appendChild(img);
-
-                }
-
-
-                else if (
-                    archivo.type
-                    .startsWith("video/")
-                ) {
-
-                    const video =
-                        document.createElement(
-                            "video"
-                        );
-
-                    video.src =
-                        URL.createObjectURL(
-                            archivo
-                        );
-
-                    video.muted = true;
-
-                    video.preload =
-                        "metadata";
-
-                    item.appendChild(video);
-
-
-                    const icono =
-                        document.createElement(
-                            "div"
-                        );
-
-                    icono.className =
-                        "video-icon";
-
-                    icono.textContent =
-                        "▶";
-
-                    item.appendChild(icono);
-
-                }
-
-
-                preview.appendChild(item);
-
-            }
-        );
-
-
-        botonSubir.style.display =
-            "block";
-
+    if (archivosSeleccionados.length === 0) {
+        contador.textContent = "";
+        botonSubir.style.display = "none";
+        return;
     }
-);
 
+    contador.textContent = archivosSeleccionados.length + (archivosSeleccionados.length === 1 ? " archivo seleccionado" : " archivos seleccionados");
 
-/* ==================================================
-   SUBIR ARCHIVOS
-================================================== */
+    archivosSeleccionados.forEach(archivo => {
+        const item = document.createElement("div");
+        item.className = "preview-item";
 
-botonSubir.addEventListener(
-    "click",
-    async function() {
+        if (archivo.type.startsWith("image/")) {
+            const img = document.createElement("img");
+            img.src = URL.createObjectURL(archivo);
+            item.appendChild(img);
+        } else if (archivo.type.startsWith("video/")) {
+            const video = document.createElement("video");
+            video.src = URL.createObjectURL(archivo);
+            video.muted = true;
+            item.appendChild(video);
 
+            const icono = document.createElement("div");
+            icono.className = "video-icon";
+            icono.textContent = "▶";
+            item.appendChild(icono);
+        }
+        preview.appendChild(item);
+    });
 
-        if (
-            archivosSeleccionados.length
-            === 0
-        ) {
+    botonSubir.style.display = "block";
+});
 
-            return;
+botonSubir.addEventListener("click", async function() {
+    if (archivosSeleccionados.length === 0) return;
 
+    botonSubir.disabled = true;
+    progresoContainer.style.display = "block";
+    error.style.display = "none";
+
+    let enviados = 0;
+    const total = archivosSeleccionados.length;
+
+    try {
+        for (let archivo of archivosSeleccionados) {
+            const formData = new FormData();
+            formData.append("archivo", archivo);
+            formData.append("evento", ID_EVENTO);
+            formData.append("nombreEvento", NOMBRE_EVENTO);
+
+            estado.textContent = `Subiendo (${enviados + 1} de ${total}): ${archivo.name}`;
+
+            const respuesta = await fetch(URL_BACKEND, {
+                method: "POST",
+                body: formData // Envío directo por FormData (sin base64)
+            });
+
+            if (!respuesta.ok) throw new Error("Error al subir " + archivo.name);
+
+            const resultado = await respuesta.json();
+            if (!resultado.success) throw new Error(resultado.error || "Error en el servidor");
+
+            enviados++;
+            progreso.style.width = Math.round((enviados / total) * 100) + "%";
         }
 
-
-        botonSubir.disabled =
-            true;
-
-        progresoContainer.style.display =
-            "block";
-
-        error.style.display =
-            "none";
-
-
-        let enviados = 0;
-
-
-        try {
-
-
-            for (
-                const archivo
-                of archivosSeleccionados
-            ) {
-
-
-                estado.textContent =
-                    "Preparando " +
-                    archivo.name;
-
-
-                let archivoParaSubir =
-                    archivo;
-
-
-                /*
-                 SOLO LAS FOTOS
-                 SE COMPRIMEN
-                */
-
-                if (
-                    archivo.type
-                    .startsWith("image/")
-                ) {
-
-                    archivoParaSubir =
-                        await comprimirImagen(
-                            archivo
-                        );
-
-                }
-
-
-                estado.textContent =
-                    "Subiendo " +
-                    archivo.name;
-
-
-                const base64 =
-                    await convertirBase64(
-                        archivoParaSubir
-                    );
-
-
-                const datos = {
-
-                    fileName:
-                        archivoParaSubir.name,
-
-                    mimeType:
-                        archivoParaSubir.type,
-
-                    fileData:
-                        base64,
-
-                    evento:
-                        ID_EVENTO,
-
-                    nombreEvento:
-                        NOMBRE_EVENTO
-
-                };
-
-
-                const respuesta =
-                    await fetch(
-                        URL_APPS_SCRIPT,
-                        {
-
-                            method:
-                                "POST",
-
-                            body:
-                                JSON.stringify(
-                                    datos
-                                )
-
-                        }
-                    );
-
-
-                if (
-                    !respuesta.ok
-                ) {
-
-                    throw new Error(
-                        "Error de conexión"
-                    );
-
-                }
-
-
-                const resultado =
-                    await respuesta.json();
-
-
-                if (
-                    !resultado.success
-                ) {
-
-                    throw new Error(
-                        resultado.error
-                    );
-
-                }
-
-
-                enviados++;
-
-
-                const porcentaje =
-                    Math.round(
-                        (
-                            enviados /
-                            archivosSeleccionados.length
-                        ) * 100
-                    );
-
-
-                progreso.style.width =
-                    porcentaje + "%";
-
-            }
-
-
-            estado.textContent =
-                "¡Subida completada!";
-
-
-            exito.style.display =
-                "block";
-
-
-            botonSubir.style.display =
-                "none";
-
-
-        }
-
-        catch(e) {
-
-
-            console.error(e);
-
-
-            error.textContent =
-                "No pudimos subir los archivos. Intenta nuevamente.";
-
-
-            error.style.display =
-                "block";
-
-
-            botonSubir.disabled =
-                false;
-
-        }
-
+        estado.textContent = "¡Subida completada!";
+        exito.style.display = "block";
+        botonSubir.style.display = "none";
+
+    } catch(e) {
+        console.error(e);
+        error.textContent = "Ocurrió un error al subir los archivos. Inténtalo de nuevo.";
+        error.style.display = "block";
+        botonSubir.disabled = false;
     }
-);
-
-
-/* ==================================================
-   BASE64
-================================================== */
-
-function convertirBase64(
-    archivo
-) {
-
-    return new Promise(
-        (
-            resolve,
-            reject
-        ) => {
-
-            const reader =
-                new FileReader();
-
-
-            reader.onload =
-                () => {
-
-                    const resultado =
-                        reader.result
-                        .split(",")[1];
-
-                    resolve(
-                        resultado
-                    );
-
-                };
-
-
-            reader.onerror =
-                error => {
-
-                    reject(error);
-
-                };
-
-
-            reader.readAsDataURL(
-                archivo
-            );
-
-        }
-    );
-
-}
-
-
-/* ==================================================
-   COMPRIMIR FOTOS
-================================================== */
-
-function comprimirImagen(
-    archivo
-) {
-
-    return new Promise(
-        (
-            resolve,
-            reject
-        ) => {
-
-
-            const img =
-                new Image();
-
-
-            const reader =
-                new FileReader();
-
-
-            reader.onload =
-                function(e) {
-
-                    img.src =
-                        e.target.result;
-
-                };
-
-
-            img.onload =
-                function() {
-
-
-                    const MAX_WIDTH =
-                        1800;
-
-                    const MAX_HEIGHT =
-                        1800;
-
-
-                    let ancho =
-                        img.width;
-
-                    let alto =
-                        img.height;
-
-
-                    if (
-                        ancho >
-                        MAX_WIDTH
-                    ) {
-
-                        alto =
-                            alto *
-                            (
-                                MAX_WIDTH /
-                                ancho
-                            );
-
-                        ancho =
-                            MAX_WIDTH;
-
-                    }
-
-
-                    if (
-                        alto >
-                        MAX_HEIGHT
-                    ) {
-
-                        ancho =
-                            ancho *
-                            (
-                                MAX_HEIGHT /
-                                alto
-                            );
-
-                        alto =
-                            MAX_HEIGHT;
-
-                    }
-
-
-                    const canvas =
-                        document.createElement(
-                            "canvas"
-                        );
-
-
-                    canvas.width =
-                        ancho;
-
-                    canvas.height =
-                        alto;
-
-
-                    const ctx =
-                        canvas.getContext(
-                            "2d"
-                        );
-
-
-                    ctx.drawImage(
-                        img,
-                        0,
-                        0,
-                        ancho,
-                        alto
-                    );
-
-
-                    canvas.toBlob(
-                        blob => {
-
-
-                            if (!blob) {
-
-                                reject(
-                                    new Error(
-                                        "No se pudo comprimir la imagen"
-                                    )
-                                );
-
-                                return;
-
-                            }
-
-
-                            const nuevoArchivo =
-                                new File(
-                                    [blob],
-
-                                    archivo.name
-                                        .replace(
-                                            /\.[^/.]+$/,
-                                            ""
-                                        )
-                                        +
-                                        ".jpg",
-
-                                    {
-                                        type:
-                                            "image/jpeg"
-                                    }
-                                );
-
-
-                            resolve(
-                                nuevoArchivo
-                            );
-
-
-                        },
-
-                        "image/jpeg",
-
-                        0.82
-
-                    );
-
-                };
-
-
-            img.onerror =
-                reject;
-
-
-            reader.readAsDataURL(
-                archivo
-            );
-
-        }
-    );
-
-}
-
+});
 </script>
-
 </body>
 </html>
