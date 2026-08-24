@@ -19,7 +19,7 @@ const PARENT_FOLDER_ID = process.env.PARENT_FOLDER_ID; // El ID de tu Carpeta Ma
 app.use(express.json());
 
 // Ruta para recibir los archivos desde tu página web
-app.post('/subir-recuerdo', upload.single('recuerdo'), async (req, res) => {
+app.post('/subir-recuerdo', upload.single('archivo'), async (req, res) => {
     try {
         if (!req.file) {
             return res.status(400).json({ error: 'No se subió ningún archivo' });
