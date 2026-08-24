@@ -10,11 +10,12 @@ const upload = multer({ storage: multer.memoryStorage() });
 const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS);
 const auth = new google.auth.GoogleAuth({
     credentials,
-    scopes: ['https://www.googleapis.com/auth/drive.file']
+    scopes: ['https://www.googleapis.com/auth/drive']
 });
 const drive = google.drive({ version: 'v3', auth });
 
-const PARENT_FOLDER_ID = process.env.PARENT_FOLDER_ID; // El ID de tu Carpeta Madre "FOTOS Y VIDEOS EVENTOS"
+const PARENT_FOLDER_ID = process.env.PARENT_FOLDER_ID; // El ID de tu Carpeta Madre
+const YOUR_EMAIL = 'invitaendigitalweb@gmail.com'; // Tu correo personal
 
 app.use(express.json());
 
@@ -25,10 +26,7 @@ app.post('/subir-recuerdo', upload.single('archivo'), async (req, res) => {
             return res.status(400).json({ error: 'No se subió ningún archivo' });
         }
 
-        // Puedes recibir el nombre del evento desde la página web (ej. "PRUEBA MATEO")
-        // Si la página web no manda nada, por defecto usará "PRUEBA MATEO"
         const nombreEvento = req.body.evento || 'PRUEBA MATEO';
-
         console.log(`Buscando o creando la carpeta para el evento: ${nombreEvento}`);
 
         // 1. Buscar si la carpeta del evento ya existe dentro de la Carpeta Madre
@@ -43,7 +41,7 @@ app.post('/subir-recuerdo', upload.single('archivo'), async (req, res) => {
         if (folderSearch.data.files.length > 0) {
             eventFolderId = folderSearch.data.files[0].id;
         } else {
-            // Si no existe, la crea solita dentro de la Carpeta Madre
+            // Si no existe, la crea dentro de la Carpeta Madre
             const folderMetadata = {
                 name: nombreEvento,
                 mimeType: 'application/vnd.google-apps.folder',
@@ -54,6 +52,20 @@ app.post('/subir-recuerdo', upload.single('archivo'), async (req, res) => {
                 fields: 'id'
             });
             eventFolderId = createdFolder.data.id;
+
+            // Compartir la subcarpeta recién creada con tu correo personal como Editor/Propietario
+            try {
+                await drive.permissions.create({
+                    fileId: eventFolderId,
+                    requestBody: {
+                        role: 'editor',
+                        type: 'user',
+                        emailAddress: YOUR_EMAIL
+                    }
+                });
+            } catch (permError) {
+                console.error('No se pudo compartir la subcarpeta automáticamente:', permError);
+            }
         }
 
         // 2. Subir el archivo (foto o video) a la carpeta del evento
@@ -86,7 +98,7 @@ app.post('/subir-recuerdo', upload.single('archivo'), async (req, res) => {
     }
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en el puerto ${PORT}`);
 });
