@@ -14,12 +14,11 @@ const auth = new google.auth.GoogleAuth({
 });
 const drive = google.drive({ version: 'v3', auth });
 
-const PARENT_FOLDER_ID = process.env.PARENT_FOLDER_ID; // El ID de tu Carpeta Madre
+const PARENT_FOLDER_ID = process.env.PARENT_FOLDER_ID; // El ID de tu Carpeta Madre principal
 const YOUR_EMAIL = 'invitaendigitalweb@gmail.com'; // Tu correo personal
 
 app.use(express.json());
 
-// Ruta para recibir los archivos desde tu página web
 app.post('/subir-recuerdo', upload.single('archivo'), async (req, res) => {
     try {
         if (!req.file) {
@@ -41,7 +40,7 @@ app.post('/subir-recuerdo', upload.single('archivo'), async (req, res) => {
         if (folderSearch.data.files.length > 0) {
             eventFolderId = folderSearch.data.files[0].id;
         } else {
-            // Si no existe, la crea dentro de la Carpeta Madre
+            // Crear la subcarpeta del evento
             const folderMetadata = {
                 name: nombreEvento,
                 mimeType: 'application/vnd.google-apps.folder',
@@ -53,22 +52,18 @@ app.post('/subir-recuerdo', upload.single('archivo'), async (req, res) => {
             });
             eventFolderId = createdFolder.data.id;
 
-            // Compartir la subcarpeta recién creada con tu correo personal como Editor/Propietario
-            try {
-                await drive.permissions.create({
-                    fileId: eventFolderId,
-                    requestBody: {
-                        role: 'editor',
-                        type: 'user',
-                        emailAddress: YOUR_EMAIL
-                    }
-                });
-            } catch (permError) {
-                console.error('No se pudo compartir la subcarpeta automáticamente:', permError);
-            }
+            // Dar permisos de editor a tu correo personal para que la carpeta sea tuya en la práctica
+            await drive.permissions.create({
+                fileId: eventFolderId,
+                requestBody: {
+                    role: 'editor',
+                    type: 'user',
+                    emailAddress: YOUR_EMAIL
+                }
+            });
         }
 
-        // 2. Subir el archivo (foto o video) a la carpeta del evento
+        // 2. Subir el archivo usando los permisos de la carpeta del evento
         const stream = new Readable();
         stream.push(req.file.buffer);
         stream.push(null);
@@ -86,7 +81,8 @@ app.post('/subir-recuerdo', upload.single('archivo'), async (req, res) => {
         const uploadedFile = await drive.files.create({
             resource: fileMetadata,
             media: media,
-            fields: 'id, name'
+            fields: 'id, name',
+            supportsAllDrives: true
         });
 
         console.log(`¡Archivo subido con éxito a Google Drive! ID: ${uploadedFile.data.id}`);
