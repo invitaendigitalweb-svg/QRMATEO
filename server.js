@@ -6,7 +6,7 @@ const { Readable } = require('stream');
 const app = express();
 const upload = multer({ storage: multer.memoryStorage() });
 
-// Configuración de Google Drive con las credenciales seguras de Render
+// Configuración de Google Drive con tus credenciales de Render
 const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS);
 const auth = new google.auth.GoogleAuth({
     credentials,
@@ -14,21 +14,24 @@ const auth = new google.auth.GoogleAuth({
 });
 const drive = google.drive({ version: 'v3', auth });
 
-const PARENT_FOLDER_ID = process.env.PARENT_FOLDER_ID; // El ID de tu Carpeta Madre principal
-const YOUR_EMAIL = 'invitaendigitalweb@gmail.com'; // Tu correo personal
+// El ID de tu Carpeta Madre "QR FOTOS Y VIDEOS" en Google Drive
+const PARENT_FOLDER_ID = process.env.PARENT_FOLDER_ID;
 
 app.use(express.json());
 
+// Ruta para recibir los archivos desde tu página web
 app.post('/subir-recuerdo', upload.single('archivo'), async (req, res) => {
     try {
         if (!req.file) {
             return res.status(400).json({ error: 'No se subió ningún archivo' });
         }
 
-        const nombreEvento = req.body.evento || 'PRUEBA MATEO';
-        console.log(`Buscando o creando la carpeta para el evento: ${nombreEvento}`);
+        // Nombre del evento que manda la página web (ej. "BAUTIZO MATEO")
+        const nombreEvento = req.body.evento || 'BAUTIZO MATEO';
 
-        // 1. Buscar si la carpeta del evento ya existe dentro de la Carpeta Madre
+        console.log(`Buscando o creando la carpeta para el evento: "${nombreEvento}" dentro de la Carpeta Madre...`);
+
+        // 1. Buscar si la carpeta del evento ya existe dentro de "QR FOTOS Y VIDEOS"
         const folderQuery = `mimeType='application/vnd.google-apps.folder' and name='${nombreEvento}' and '${PARENT_FOLDER_ID}' in parents and trashed=false`;
         const folderSearch = await drive.files.list({
             q: folderQuery,
@@ -39,8 +42,9 @@ app.post('/subir-recuerdo', upload.single('archivo'), async (req, res) => {
 
         if (folderSearch.data.files.length > 0) {
             eventFolderId = folderSearch.data.files[0].id;
+            console.log(`La carpeta "${nombreEvento}" ya existe. Usando ID: ${eventFolderId}`);
         } else {
-            // Crear la subcarpeta del evento
+            // Si no existe, se crea solita dentro de "QR FOTOS Y VIDEOS"
             const folderMetadata = {
                 name: nombreEvento,
                 mimeType: 'application/vnd.google-apps.folder',
@@ -51,19 +55,10 @@ app.post('/subir-recuerdo', upload.single('archivo'), async (req, res) => {
                 fields: 'id'
             });
             eventFolderId = createdFolder.data.id;
-
-            // Dar permisos de editor a tu correo personal para que la carpeta sea tuya en la práctica
-            await drive.permissions.create({
-                fileId: eventFolderId,
-                requestBody: {
-                    role: 'editor',
-                    type: 'user',
-                    emailAddress: YOUR_EMAIL
-                }
-            });
+            console.log(`¡Carpeta "${nombreEvento}" creada con éxito! ID: ${eventFolderId}`);
         }
 
-        // 2. Subir el archivo usando los permisos de la carpeta del evento
+        // 2. Subir el archivo a la carpeta del evento
         const stream = new Readable();
         stream.push(req.file.buffer);
         stream.push(null);
@@ -85,11 +80,15 @@ app.post('/subir-recuerdo', upload.single('archivo'), async (req, res) => {
             supportsAllDrives: true
         });
 
-        console.log(`¡Archivo subido con éxito a Google Drive! ID: ${uploadedFile.data.id}`);
-        res.status(200).json({ success: true, message: '¡Subido con éxito a Google Drive!', fileId: uploadedFile.data.id });
+        console.log(`¡Archivo subido con éxito a la carpeta "${nombreEvento}"!`);
+        res.status(200).json({ 
+            success: true, 
+            message: '¡Subido con éxito a Google Drive!', 
+            fileId: uploadedFile.data.id 
+        });
 
     } catch (error) {
-        console.error('Error al subir el archivo a Drive:', error);
+        console.error('Error al procesar en Drive:', error);
         res.status(500).json({ error: 'Hubo un error al procesar el archivo en el servidor.' });
     }
 });
