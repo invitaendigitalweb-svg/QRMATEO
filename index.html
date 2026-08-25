@@ -1,198 +1,53 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Comparte tus recuerdos</title>
-<style>
-:root {
-    --color-principal: #7D5578;
-    --color-claro: #F7F0F6;
-    --color-texto: #555;
-}
-* { box-sizing: border-box; }
-body {
-    margin: 0; min-height: 100vh; padding: 16px;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    background: linear-gradient(135deg, #faf5f9, #eee4ed);
-    display: flex; justify-content: center; align-items: center;
-}
-.contenedor {
-    width: 100%; max-width: 520px; background: white;
-    border-radius: 28px; padding: 35px 24px 28px; text-align: center;
-    box-shadow: 0 15px 45px rgba(0,0,0,.10);
-}
-.icono {
-    width: 72px; height: 72px; margin: 0 auto 18px; border-radius: 50%;
-    background: var(--color-claro); display: flex; align-items: center; justify-content: center; font-size: 32px;
-}
-h1 { margin: 0; color: var(--color-principal); font-size: 28px; font-weight: 600; }
-.evento { margin-top: 8px; color: #888; font-size: 15px; }
-.descripcion { margin: 20px auto 26px; max-width: 390px; color: var(--color-texto); font-size: 15px; line-height: 1.6; }
-.selector {
-    width: 100%; display: flex; justify-content: center; align-items: center; gap: 8px;
-    padding: 16px; border-radius: 50px; background: var(--color-principal); color: white;
-    font-size: 16px; font-weight: 600; cursor: pointer; box-shadow: 0 8px 20px rgba(125,85,120,.20);
-}
-input[type="file"] { display: none; }
-#contador { margin-top: 15px; color: #888; font-size: 14px; }
-#preview { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; margin-top: 20px; }
-.preview-item { position: relative; aspect-ratio: 1 / 1; overflow: hidden; border-radius: 13px; background: #eee; }
-.preview-item img, .preview-item video { width: 100%; height: 100%; object-fit: cover; }
-.video-icon {
-    position: absolute; right: 7px; bottom: 7px; width: 28px; height: 28px;
-    border-radius: 50%; background: rgba(0,0,0,.65); color: white;
-    display: flex; align-items: center; justify-content: center; font-size: 12px;
-}
-#subir {
-    display: none; width: 100%; margin-top: 22px; padding: 16px; border: none;
-    border-radius: 50px; background: var(--color-principal); color: white; font-size: 16px; font-weight: 600; cursor: pointer;
-}
-#subir:disabled { opacity: .55; }
-#progreso-container { display: none; margin-top: 25px; }
-.barra { width: 100%; height: 9px; background: #eee; border-radius: 20px; overflow: hidden; }
-#progreso { width: 0%; height: 100%; background: var(--color-principal); transition: width .25s; }
-#estado { margin-top: 10px; color: #888; font-size: 13px; }
-.exito {
-    display: none; margin-top: 25px; padding: 22px; border-radius: 18px;
-    background: var(--color-claro); color: var(--color-principal); font-size: 15px; line-height: 1.5; font-weight: 600;
-}
-.error { display: none; margin-top: 18px; color: #c0392b; font-size: 14px; }
-.nota { margin-top: 20px; color: #aaa; font-size: 12px; line-height: 1.5; }
-</style>
+    <meta charset="UTF-8">
+    <title>Subir Recuerdo - Bautizo Mateo</title>
 </head>
 <body>
+    <h1>Sube tu foto para el Bautizo de Mateo</h1>
+    
+    <form id="uploadForm">
+        <input type="file" id="archivoInput" accept="image/*,video/*" required><br><br>
+        <button type="submit">Subir Recuerdo</button>
+    </form>
 
-<div class="contenedor">
-    <div class="icono">📸</div>
-    <h1>Comparte tus recuerdos</h1>
-    <div class="evento" id="nombreEvento">PRUEBA MATEO</div>
-    <div class="descripcion">
-        Comparte aquí tus fotos y videos para guardar todos los momentos especiales de este día. 🤍
-    </div>
+    <p id="mensaje"></p>
 
-    <label class="selector" for="archivos">
-        📷 Seleccionar fotos y videos
-    </label>
-    <input type="file" id="archivos" accept="image/*,video/*" multiple>
+    <script>
+        const form = document.getElementById('uploadForm');
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const archivoInput = document.getElementById('archivoInput').files[0];
+            const mensaje = document.getElementById('mensaje');
 
-    <div id="contador"></div>
-    <div id="preview"></div>
+            if (!archivoInput) return;
 
-    <button id="subir">✨ Subir mis recuerdos</button>
-
-    <div id="progreso-container">
-        <div class="barra"><div id="progreso"></div></div>
-        <div id="estado">Subiendo archivos...</div>
-    </div>
-
-    <div class="exito" id="exito">
-        🎉 ¡Listo!<br><br>Tus recuerdos fueron guardados correctamente. 🤍
-    </div>
-
-    <div class="error" id="error"></div>
-    <div class="nota">Puedes seleccionar varias fotos y videos al mismo tiempo.</div>
-</div>
-
-<script>
-// CONFIGURACIÓN
-const NOMBRE_EVENTO = "PRUEBA MATEO";
-const ID_EVENTO = "prueba-mateo";
-const URL_BACKEND = "https://qrmateo.onrender.com/subir-recuerdo"; // Aquí pondrás la URL que te dé Render/Railway
-
-const input = document.getElementById("archivos");
-const preview = document.getElementById("preview");
-const contador = document.getElementById("contador");
-const botonSubir = document.getElementById("subir");
-const progresoContainer = document.getElementById("progreso-container");
-const progreso = document.getElementById("progreso");
-const estado = document.getElementById("estado");
-const exito = document.getElementById("exito");
-const error = document.getElementById("error");
-
-let archivosSeleccionados = [];
-
-input.addEventListener("change", function() {
-    archivosSeleccionados = Array.from(input.files);
-    preview.innerHTML = "";
-
-    if (archivosSeleccionados.length === 0) {
-        contador.textContent = "";
-        botonSubir.style.display = "none";
-        return;
-    }
-
-    contador.textContent = archivosSeleccionados.length + (archivosSeleccionados.length === 1 ? " archivo seleccionado" : " archivos seleccionados");
-
-    archivosSeleccionados.forEach(archivo => {
-        const item = document.createElement("div");
-        item.className = "preview-item";
-
-        if (archivo.type.startsWith("image/")) {
-            const img = document.createElement("img");
-            img.src = URL.createObjectURL(archivo);
-            item.appendChild(img);
-        } else if (archivo.type.startsWith("video/")) {
-            const video = document.createElement("video");
-            video.src = URL.createObjectURL(archivo);
-            video.muted = true;
-            item.appendChild(video);
-
-            const icono = document.createElement("div");
-            icono.className = "video-icon";
-            icono.textContent = "▶";
-            item.appendChild(icono);
-        }
-        preview.appendChild(item);
-    });
-
-    botonSubir.style.display = "block";
-});
-
-botonSubir.addEventListener("click", async function() {
-    if (archivosSeleccionados.length === 0) return;
-
-    botonSubir.disabled = true;
-    progresoContainer.style.display = "block";
-    error.style.display = "none";
-
-    let enviados = 0;
-    const total = archivosSeleccionados.length;
-
-    try {
-        for (let archivo of archivosSeleccionados) {
             const formData = new FormData();
-            formData.append("archivo", archivo);
-            formData.append("evento", ID_EVENTO);
-            formData.append("nombreEvento", NOMBRE_EVENTO);
+            formData.append('archivo', archivoInput);
+            // AQUÍ ES DONDE CAMBIAS EL NOMBRE DEL EVENTO SEGÚN EL CLIENTE:
+            formData.append('evento', 'BAUTIZO MATEO');
 
-            estado.textContent = `Subiendo (${enviados + 1} de ${total}): ${archivo.name}`;
+            mensaje.textContent = 'Subiendo, por favor espera...';
 
-            const respuesta = await fetch(URL_BACKEND, {
-                method: "POST",
-                body: formData // Envío directo por FormData (sin base64)
-            });
+            try {
+                // Cambia esta URL por la URL real que te dé Render de tu servidor
+                const response = await fetch('https://TU-SERVIDOR-EN-RENDER.onrender.com/subir-recuerdo', {
+                    method: 'POST',
+                    body: formData
+                });
 
-            if (!respuesta.ok) throw new Error("Error al subir " + archivo.name);
-
-            const resultado = await respuesta.json();
-            if (!resultado.success) throw new Error(resultado.error || "Error en el servidor");
-
-            enviados++;
-            progreso.style.width = Math.round((enviados / total) * 100) + "%";
-        }
-
-        estado.textContent = "¡Subida completada!";
-        exito.style.display = "block";
-        botonSubir.style.display = "none";
-
-    } catch(e) {
-        console.error(e);
-        error.textContent = "Ocurrió un error al subir los archivos. Inténtalo de nuevo.";
-        error.style.display = "block";
-        botonSubir.disabled = false;
-    }
-});
-</script>
+                const resultado = await response.json();
+                if (resultado.success) {
+                    mensaje.textContent = '¡Foto subida con éxito!';
+                } else {
+                    mensaje.textContent = 'Error: ' + resultado.error;
+                }
+            } catch (err) {
+                console.error(err);
+                mensaje.textContent = 'Hubo un error de conexión con el servidor.';
+            }
+        });
+    </script>
 </body>
 </html>
