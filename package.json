@@ -1,14 +1,14 @@
 {
-  "name": "backend-qrmateo",
+  "name": "subidor-drive",
   "version": "1.0.0",
-  "description": "Servidor para subida de recuerdos",
+  "description": "Servidor para subir fotos a Google Drive por eventos",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
     "express": "^4.19.2",
-    "googleapis": "^140.0.0",
+    "googleapis": "^134.0.0",
     "multer": "^1.4.5-lts.1"
   }
 }
